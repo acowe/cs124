@@ -14,19 +14,49 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-
-const collectionName = "acowe-tasks"
+const collectionName = "acowe-tasks-2"
 
 
 function InCloudApp(props) {
+    const query = db.collection(collectionName);
+    const [value, loading, error] = useCollection(query);
+    const [currentList, setCurrentList] = useState("wow");
+
     const [sortVal, setSortVal] = useState("default");
     const [sortPriority, setSortPriority] = useState("place_order");
     const [sortDirection, setSortDirection] = useState('asc');
-    const [orderNum, setOrderNum] = useState(0);
-    const query = db.collection(collectionName).orderBy(sortPriority,sortDirection)
-    const [value, loading, error] = useCollection(query);
+
+    const query_2 = db.collection(collectionName).doc(currentList)
+        .collection(currentList + "_tasks").orderBy(sortPriority,sortDirection);
+    const [task_value, task_loading, t_error] = useCollection(query_2);
+
+
     const [showCompletedTask, setShowCompletedTask]=useState(true);
     const [toDelete, setToDelete]=useState(false);
+    const [maxMessage, setMaxMessage] = useState("");
+    const [orderNum, setOrderNum] = useState(0);
+
+    /*database.collection(collectionName).doc(tasks.).collection('movies').get()*/
+
+    let taskLists = [];
+    let tasks = [];
+    if (value) {
+        taskLists = value.docs.map((doc) => {
+            return {...doc.data()}});
+    }
+
+    console.log(taskLists)
+    if(currentList !== "wow" && task_value){
+        tasks = task_value.docs.map((doc)=>{
+            return {...doc.data()}});
+    }
+
+    if(tasks.length !== 0){
+        console.log(tasks[0].task_id);
+    }
+
+
+
 
     function setSort(sortPref) {
         setSortVal(sortPref);
@@ -45,68 +75,151 @@ function InCloudApp(props) {
 
     }
 
-    let tasks = [];
-    if (value) {
-        tasks = value.docs.map((doc) => {
-            return {...doc.data()}});
+    function handleTaskListAdded(listNameText) {
+        const newListId = generateUniqueID();
+        db.collection(collectionName).doc(newListId).set({
+            list_id: newListId,
+            list_name: listNameText
+        })
+        setCurrentList(newListId);
     }
 
-    console.log(tasks)
+    function handleTaskListSelect(listId){
+        console.log("input list id: " + listId);
+        setCurrentList(listId);
+    }
+
+
+
+    function handleTaskAdded(text, priorityNum){
+        if(tasks.length < 10){
+            setMaxMessage("");
+            const newTaskId = generateUniqueID();
+            setOrderNum(orderNum + 1);
+            db.collection(collectionName).doc(currentList)
+                .collection(currentList + "_tasks")
+                .doc(newTaskId).set({
+                task_id: newTaskId,
+                task_name: text,
+                completed: false,
+                priority: priorityNum,
+                place_order: orderNum,
+            })
+
+        }
+        else if (tasks.length = 10){
+            setMaxMessage("Max number of tasks reached! (You should" +
+                " take care of some of the stuff on the list first! :) )");
+        }
+    }
+
+    function deleteAllTasks(listID){
+        db.collection(collectionName).doc(listID)
+            .collection("" + listID + "_tasks")
+            .get()
+            .then(querySnapshot => {
+                querySnapshot.forEach(doc => {
+                    db.collection(collectionName)
+                        .doc(listID)
+                        .collection("" + listID + "_tasks").
+                    doc(doc.id).delete();
+                });
+            });
+    }
+
+    function handleTaskListDeleted(){
+        if(taskLists.length > 0){
+            let listToBeDeleted = currentList;
+            if(listToBeDeleted === "wow"){
+                console.log("A");
+                console.log("Please select a list to be deleted");
+            }
+            else if(listToBeDeleted === taskLists[0].list_id){
+                if(taskLists.length===1){
+                    setCurrentList("wow");
+                }
+                else{
+                    setCurrentList(taskLists[1].list_id);
+                }
+            }
+            else{
+                setCurrentList(taskLists[0].list_id);
+            }
+            deleteAllTasks(listToBeDeleted);
+            db.collection(collectionName).doc(listToBeDeleted).delete();
+        }
+    }
 
     function handleTaskFieldChanged(taskId, field, value) {
-        db.collection(collectionName).doc(taskId).update(
+        db.collection(collectionName).doc(currentList)
+            .collection(currentList + "_tasks").doc(taskId).update(
             {[field]:value}
         );
     }
 
-    function handleTaskAdded(text, priorityNum){
-        const newId = generateUniqueID();
-        setOrderNum(orderNum + 1);
-        db.collection(collectionName).doc(newId).set({
-            id: newId,
-            task: text,
-            completed: false,
-            priority: priorityNum,
-            place_order: orderNum
-        })
-    }
 
     function getCompleted(){
         let retArr = [];
         for (let i=0; i< tasks.length;i++){
             if(tasks[i].completed){
-                retArr.push(tasks[i].id);
+                retArr.push(tasks[i].task_id);
             }
         }
         return retArr;
     }
 
+
+
     function handleTasksDeleted(){
         const completedIDs =getCompleted();
         setToDelete(true);
         for(let i=0; i< completedIDs.length;i++){
-            db.collection(collectionName).doc(completedIDs[i]).delete();
+            db.collection(collectionName)
+                .doc(currentList)
+                .collection(currentList + "_tasks")
+                .doc(completedIDs[i]).delete();
         }
         setToDelete(false);
     }
 
 
+
+    /* print all tasks (delete all things in a subcol)*/
+    /*db.collection(collectionName).doc(currentList)
+        .collection(currentList + "_tasks")
+        .get()
+        .then(querySnapshot => {
+            querySnapshot.forEach(doc => {
+                console.log(doc.data().task_id);});
+        });*/
+
+
     return <div>
-        <App loading={loading} tasks={tasks}
+        <App loading={loading}
+             taskLists={taskLists}
+             taskLoading = {task_loading}
+             tasks={tasks}
+             currentList = {currentList}
              showCompletedTask={showCompletedTask}
              handleHideCompleted={()=>setShowCompletedTask(!showCompletedTask)}
-             handleTaskAdded={handleTaskAdded}
-             handleTaskFieldChanged={handleTaskFieldChanged}
-        handleTasksDeleted={handleTasksDeleted}
+             handleTaskListAdded ={handleTaskListAdded}
+             handleTaskListSelect = {handleTaskListSelect}
+             handleTaskAdded ={handleTaskAdded}
+             handleTaskFieldChanged = {handleTaskFieldChanged}
+             handleTaskListDeleted={handleTaskListDeleted}
+             handleTasksDeleted={handleTasksDeleted}
+             deleteAllTasks = {deleteAllTasks}
              setSort={setSort}
              sortVal={sortVal}
-             toDelete={toDelete}/>
+             toDelete={toDelete}
+             maxMessage={maxMessage}/>
     </div>
 }
 
 
 /*setData(setDataHelper(id,check))*/
 export default InCloudApp;
+
 
 
 /*onItemDeleted={handleItemsDeleted} onItemAdded={(text)=>handleItemAdded(text)}

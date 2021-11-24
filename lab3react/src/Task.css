@@ -1,13 +1,28 @@
-body {
-    line-height: 1.5;
+.task {
+
 }
 
+.comptrueshowtrue {
+    padding: 5px;
+}
+.compfalseshowtrue{
+    padding: 5px;
+}
+
+.compfalseshowfalse{
+    padding: 5px;
+}
 .comptrueshowfalse{
     display: none;
 }
 
 .edit {
-    background-color: aquamarine;
+    background-color: #C7FDFA;
+}
+
+input[type="checkbox"]{
+    transform: scale(1.25);
+
 }
 
 input[type="checkbox"]:checked + label{
