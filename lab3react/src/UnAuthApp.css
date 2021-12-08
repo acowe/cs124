@@ -29,19 +29,19 @@
 @media screen and (min-width: 767px) and (max-height: 1023px){
     .AppInUseButton {
         display: revert;
-        transform: scale(1.5) translateY(50%) translateX(17.25%);
+        transform: scale(1.5) translateY(20%) translateX(17.25%);
         text-align: left;
     }
 
     .signIn {
         display: revert;
-        transform: scale(2) translateY(50%) translateX(20%);
+        transform: scale(1.5) translateY(20%) translateX(17.25%);
         text-align: left;
     }
 
     .signUp {
         display: revert;
-        transform: scale(2) translateY(50%) translateX(20%);
+        transform: scale(1.5) translateY(20%) translateX(17.25%);
         text-align: left;
     }
 }

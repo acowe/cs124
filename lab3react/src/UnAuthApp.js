@@ -59,10 +59,6 @@ function UnAuthApp(props){
     }
 }
 
-const FAKE_EMAIL = 'foo@bar.com';
-const FAKE_PASSWORD = 'xyzzyxx';
-
-
 function SignIn() {
     const [
         signInWithEmailAndPassword,
@@ -94,10 +90,14 @@ function SignIn() {
         {error && <p>"Error logging in: " {error.message}</p>}
         <input  type = "text"  id = "emailText" name="emailText"
                 onKeyPress={(e)=>onEnterEmail(e.key)}
-                onChange={(event)=>setEmailText(event.target.value)} value={emailText}/> <br/>
+                onChange={(event)=>setEmailText(event.target.value)}
+                aria-label="Textbox for email entry"
+                value={emailText}/> <br/>
         <input  type = "password"  id = "passText" name="passText"
                 onKeyPress={(e)=>onEnterPass(e.key)}
-                onChange={(event)=>setPassText(event.target.value)} value={passText}/> <br/>
+                onChange={(event)=>setPassText(event.target.value)}
+                aria-label="Textbox for password entry"
+                value={passText}/> <br/>
         <button onClick={() =>
             signInWithEmailAndPassword(emailText, passText)}>Login
         </button>
@@ -134,14 +134,18 @@ function SignUp() {
         }
     }
 
-    return <div className="signIn">
+    return <div className="signUp">
         {error && <p>"Error signing up: " {error.message}</p>}
         <input  type = "text"  id = "emailText" name="emailText"
                 onKeyPress={(e)=>onEnterEmail(e.key)}
-                onChange={(event)=>setEmailText(event.target.value)} value={emailText}/> <br/>
+                onChange={(event)=>setEmailText(event.target.value)}
+                aria-label="Textbox for user creation email entry"
+                value={emailText}/> <br/>
         <input  type = "password"  id = "passText" name="passText"
                 onKeyPress={(e)=>onEnterPass(e.key)}
-                onChange={(event)=>setPassText(event.target.value)} value={passText}/> <br/>
+                onChange={(event)=>setPassText(event.target.value)}
+                aria-label="Textbox for user creation password entry"
+                value={passText}/> <br/>
         <button onClick={() =>
             createUserWithEmailAndPassword(emailText, passText)}>
             Create user
