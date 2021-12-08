@@ -91,10 +91,9 @@ function InCloudApp(props) {
                     });
                 });
         }
+
     }
-
-
-
+    
     function setSort(sortPref) {
         setSortVal(sortPref);
         if (sortPref === "priorityAsc"){

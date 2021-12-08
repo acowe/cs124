@@ -1,3 +1,4 @@
+import "./UnAuthApp.css"
 import InCloudApp from "./InCloudApp";
 import {useState} from "react";
 import { useAuthState,
@@ -39,9 +40,12 @@ function UnAuthApp(props){
     } else if (user) {
         console.log(user);
         return <div>
+            <div className="AppInUseButton">
             {user.displayName || user.email}
-            <button type="button" onClick={() => auth.signOut()}>Logout</button>
-            {!user.emailVerified && <button type="button" onClick={verifyEmail}>Verify email</button>}<br/>
+                <button type="button"  onClick={() => auth.signOut()}>Logout</button>
+                {!user.emailVerified && <button type="button" onClick={verifyEmail}>
+                    Verify email</button>}<br/>
+            </div>
             <InCloudApp {...props} user={user} collectionName = {collectionName}/>
         </div>
     } else {
@@ -86,7 +90,7 @@ function SignIn() {
             signInWithEmailAndPassword(emailText, passText);
         }
     }
-    return <div>
+    return <div className="signIn">
         {error && <p>"Error logging in: " {error.message}</p>}
         <input  type = "text"  id = "emailText" name="emailText"
                 onKeyPress={(e)=>onEnterEmail(e.key)}
@@ -130,7 +134,7 @@ function SignUp() {
         }
     }
 
-    return <div>
+    return <div className="signIn">
         {error && <p>"Error signing up: " {error.message}</p>}
         <input  type = "text"  id = "emailText" name="emailText"
                 onKeyPress={(e)=>onEnterEmail(e.key)}
