@@ -6,7 +6,9 @@ function Bottom(props){
     const[listNameInput, setListNameInput] = useState("");
     const[taskNameInput, setTaskNameInput] = useState("");
     const[taskPriorityInput, setTaskPriorityInput] = useState("0");
+    const[listShareInput, setListShareInput] = useState("");
     const showTaskStuff = !(props.initial);
+    const isOwner = props.isOwner;
 
 
     function onCreateListClick(){
@@ -38,6 +40,22 @@ function Bottom(props){
         }
     }
 
+    function onShareListClick(){
+        props.handleTaskListShared(listShareInput);
+        setListShareInput("");
+    }
+    function onUnShareListClick(){
+        props.handleTaskListUnShared(listShareInput);
+        setListShareInput("");
+    }
+
+    function onShareListEnter(key){
+        if (key === 'Enter') {
+            props.handleTaskListShared(listShareInput);
+            setListShareInput("");
+        }
+    }
+
     function onCreateTaskEnter(key){
         if (key === 'Enter'){
             props.handleTaskAdded(taskNameInput,taskPriorityInput);
@@ -50,13 +68,13 @@ function Bottom(props){
     if (props.showCompletedTask){
         return <div className="bottom">
             <div className={"showTask" + showTaskStuff.toString()}>
-                <div className="taskStuff_row1">
                 <label htmlFor="newTask"> New task:</label><br/>
                 <input  type = "text" id = "newTask" name="newTask"
                         aria-label = "text box for new task entry"
                         onKeyPress={(e)=>onCreateTaskEnter(e.key)}
                         onChange={(event)=>setTaskNameInput(event.target.value)}
                         value={taskNameInput}/>
+
 
                 <select name="priorityLvl" id="priorityLvl" aria-label = "Set priority for new task"
                         onChange={(event)=>setTaskPriorityInput(event.target.value)}>
@@ -70,7 +88,6 @@ function Bottom(props){
                 <button type="button" id="createTask" onClick={(e)=> onCreateTaskClick()}>
                     Create Task
                 </button> <br/>
-                </div>
 
                 <button type="button" id="hide" onClick={(e)=>props.handleHideCompleted()} >
                     Hide Completed Tasks
@@ -79,21 +96,27 @@ function Bottom(props){
                 <button type="button" id="clear" onClick={(e) => props.handleTasksDeleted()} >
                     Clear Completed Tasks
                 </button> <br/>
-
             </div>
 
-            <div className={"listAddDelete"}>
-            <div className={"listStuff_row1"}>
-            <label htmlFor="newList">New List:</label><br/>
+            New List:<br/>
             <input  type = "text" id = "newList" name="newList"
                     aria-label="Text box for new list entry"
                     onKeyPress={(e)=>{onCreateListEnter(e.key)}}
                     onChange={(event)=>setListNameInput(event.target.value)} value={listNameInput}/>
             <button type="button" id="createList" onClick={(e)=>onCreateListClick()}> Create List </button> <br/>
-            </div>
-            <button type="button" className={"showTask" + showTaskStuff.toString()} id="listDelete" onClick={(e) => props.handleTaskListDeleted()} >
+            <label htmlFor="shareText" className={"showTask" + showTaskStuff.toString()+"isOwned" + isOwner.toString()}> Share/Unshare this list with: </label> <br/>
+            <input  type = "text" className={"showTask" + showTaskStuff.toString()+"isOwned" + isOwner.toString()} id = "shareText" name="shareText"
+                    onChange={(event)=>setListShareInput(event.target.value)}
+                    onKeyPress={(e)=>{onShareListEnter(e.key)}}
+                    value={listShareInput}/>
+            <button type="button" className={"showTask" + showTaskStuff.toString()+ "isOwned" + isOwner.toString()} id="listShare"
+                    onClick={(e)=>onShareListClick()}>
+                Share</button>
+            <button type="button" className={"showTask" + showTaskStuff.toString()+"isOwned" + isOwner.toString()} id="listShare"
+                    onClick={(e)=>onUnShareListClick()}>
+                Unshare</button> <br/>
+            <button type="button" className={"showTask" + showTaskStuff.toString()+"isOwned" + isOwner.toString()} id="listDelete" onClick={(e) => props.handleTaskListDeleted()} >
                 Delete this list </button> <br/>
-            </div>
 
 
 
@@ -102,7 +125,6 @@ function Bottom(props){
     else{
         return <div className="bottom">
             <div className={"showTask" + showTaskStuff.toString()}>
-                <div className="taskStuff_row1">
                 <label htmlFor="newTask" aria-label = "text box for new task entry"> New task:</label><br/>
                 <input  type = "text" aria-label = "text box for new task entry" id = "newTask" name="newTask"
                         onKeyPress={(e)=>onCreateTaskEnter(e.key)}
@@ -117,8 +139,6 @@ function Bottom(props){
                     <option value="3">High</option>
                 </select>
                 <button type="button" id="createTask"  onClick={(e)=>onCreateTaskClick()}> Create Task </button> <br/>
-                </div>
-
                 <button type="button" id="show" onClick={(e)=>props.handleHideCompleted()}>
                     Show Completed Tasks
                 </button>
@@ -126,17 +146,25 @@ function Bottom(props){
                     Clear Completed Tasks </button> <br/>
             </div>
 
-            <div className={"listAddDelete"}>
-            <div className={"listStuff_row1"}>
-            <label htmlFor="newList">New List:</label><br/>
+
+            New List:<br/>
             <input  type = "text" id = "newList" name="newList"
                     aria-label="Text box for new list entry"
                     onChange={(event)=>setListNameInput(event.target.value)} value={listNameInput}/>
             <button type="button" id="createList" onClick={(e)=>onCreateListClick()}> Create List </button> <br/>
-            </div>
-            <button type="button" className={"showTask" + showTaskStuff.toString()} id="listDelete" onClick={(e) => props.handleTasksDeleted()} >
+            <label htmlFor="shareText" className={"showTask" + showTaskStuff.toString()+"isOwned" + isOwner.toString()}> Share/Unshare this list with: </label> <br/>
+            <input  type = "text" className={"showTask" + showTaskStuff.toString()+"isOwned" + isOwner.toString()} id = "shareText" name="shareText"
+                    onChange={(event)=>setListShareInput(event.target.value)}
+                    onKeyPress={(e)=>{onShareListEnter(e.key)}}
+                    value={listShareInput}/>
+            <button type="button" className={"showTask" + showTaskStuff.toString()+"isOwned" + isOwner.toString()} id="listShare"
+                    onClick={(e)=>onShareListClick()}>
+                Share</button>
+            <button type="button" className={"showTask" + showTaskStuff.toString()+"isOwned" + isOwner.toString()} id="listShare"
+                    onClick={(e)=>onUnShareListClick()}>
+                Unshare</button> <br/>
+            <button type="button" className={"showTask" + showTaskStuff.toString()+"isOwned" + isOwner.toString()} id="listDelete" onClick={(e) => props.handleTasksDeleted()} >
                 Delete this list </button> <br/>
-            </div>
 
 
         </div>

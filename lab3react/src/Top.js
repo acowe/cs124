@@ -32,6 +32,7 @@ function Top(props) {
         </select>
         </span>
         <br/>
+        <span className="sharedWithText">{props.sharedWith}</span><br/>
         <div className={"showSort" + showSort.toString()}>
             <label htmlFor="sortWithSelect" aria-label = "Sort by Menu">Sort by:</label>
             <select name="sortWithSelect" aria-label = "Sort by Menu" id="sortWithSelect" value={props.sortVal}

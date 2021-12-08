@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import {useState} from "react";
 import TaskList from './TaskList.js';
@@ -7,13 +6,17 @@ import Bottom from './Bottom.js';
 import {useDocument} from "react-firebase-hooks/firestore";
 
 
+
 function App(props) {
 
     let initial = true;
 
-    if(props.currentList === "wow"){
+    if (props.loading){
+        return(props.loading && <h1>Loading</h1>);
+    }
+
+    else if(props.currentList === "wow"){
         return (<div className="App">
-            {props.loading && <h1>Loading</h1>}
             <h1>List of Things to Do</h1>
             <h5>Select a list or create a new one!</h5>
             <Top
@@ -25,11 +28,13 @@ function App(props) {
                 sortVal={props.sortVal}
                 sortDirection={props.sortDirection}
                 deleteAllTasks = {props.deleteAllTasks}
+                sharedWith = {<p></p>}
                 initial = {initial}/>
             <Bottom
                 showCompletedTask = {props.showCompletedTask}
                 handleTaskListAdded = {props.handleTaskListAdded}
                 handleTaskAdded = {props.handleTaskAdded}
+                isOwner = {props.isOwner}
                 initial = {initial}
             />
 
@@ -50,7 +55,8 @@ function App(props) {
                 sortVal={props.sortVal}
                 sortDirection={props.sortDirection}
                 deleteAllTasks = {props.deleteAllTasks}
-                initial = {initial} />
+                sharedWith = {<p>Shared with: {props.currentListSharedWith.map(s=> s + " ,")}</p>}
+                initial = {initial}/>
 
             <p>Your list has no tasks</p>
 
@@ -61,6 +67,10 @@ function App(props) {
                 handleTaskListDeleted={props.handleTaskListDeleted}
                 handleTasksDeleted = {props.handleTasksDeleted}
                 handleHideCompleted={props.handleHideCompleted}
+                handleTaskListShared = {props.handleTaskListShared}
+                handleTaskListUnShared={props.handleTaskListUnShared}
+                currentListSharedWith={props.currentListSharedWith}
+                isOwner = {props.isOwner}
                 initial = {initial}
             />
 
@@ -82,6 +92,7 @@ function App(props) {
                 sortVal={props.sortVal}
                 sortDirection={props.sortDirection}
                 deleteAllTasks = {props.deleteAllTasks}
+                sharedWith = {<span>Shared with: {props.currentListSharedWith.map(s => <span>{s}, </span>)}</span>}
                 initial = {initial}
             />
             <p>Number of tasks: {taskCount + (taskCount===10 && " (max)") }</p>
@@ -99,9 +110,15 @@ function App(props) {
                 handleTaskListDeleted={props.handleTaskListDeleted}
                 handleTasksDeleted = {props.handleTasksDeleted}
                 handleHideCompleted={props.handleHideCompleted}
+                handleTaskListShared = {props.handleTaskListShared}
+                handleTaskListUnShared={props.handleTaskListUnShared}
+                isOwner = {props.isOwner}
+                currentListSharedWith={props.currentListSharedWith}
                 initial = {initial}
 
             />
+
+
         </div>);
     }
 }
