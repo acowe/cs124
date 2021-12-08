@@ -11,6 +11,8 @@ VoiceOver Demo Video (per Lab 4): https://youtu.be/nocYTCVjTVI
     * We also wanted to (somewhat) emulate a classic paper check list so we included checkboxes and strikethrough upon checking the task.
     * The button colors were changed to be less straining on the eyes; The blue-green buttons indicate creation and edit buttons (for tasks and lists while the red buttons indicate deletion buttons 
     * Buttons and textboxes were padded out vertically for easier visibility
+    * All edit textbox elements and tabs are either labeled or aria labeled for easier accessibility via VO
+    * We made edit textboxes available for ease of immediate adding of lists, tasks, and shared users
 
 
 * Alternative designs:
