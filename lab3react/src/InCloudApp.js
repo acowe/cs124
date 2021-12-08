@@ -36,7 +36,7 @@ function InCloudApp(props) {
 
 
 
-    let query_2a = "";
+    let query_2a;
 
     if (sortDirection === "desc"){
         query_2a = db.collection(collectionName).doc(currentList)
@@ -93,7 +93,7 @@ function InCloudApp(props) {
         }
 
     }
-    
+
     function setSort(sortPref) {
         setSortVal(sortPref);
         if (sortPref === "priorityAsc"){

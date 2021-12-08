@@ -5,11 +5,8 @@ import { useAuthState,
     useCreateUserWithEmailAndPassword,
     useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import firebase from "firebase/compat";
-import {useCollection} from "react-firebase-hooks/firestore";
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import TabList from './TabList';
-import inCloudApp from "./InCloudApp";
+
 
 
 const firebaseConfig = {
@@ -23,7 +20,6 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
 const auth = firebase.auth();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 const collectionName = "TaskList-SharingAllowed"
@@ -38,7 +34,6 @@ function UnAuthApp(props){
     if (loading) {
         return <p>Checking...</p>;
     } else if (user) {
-        console.log(user);
         return <div>
             <div className="AppInUseButton">
             {user.displayName || user.email}

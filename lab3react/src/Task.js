@@ -1,4 +1,3 @@
-import App from "./App";
 import './Task.css';
 import {useState} from "react";
 

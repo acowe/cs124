@@ -1,11 +1,7 @@
 import './App.css';
-import {useState} from "react";
 import TaskList from './TaskList.js';
 import Top from './Top.js';
 import Bottom from './Bottom.js';
-import {useDocument} from "react-firebase-hooks/firestore";
-
-
 
 function App(props) {
 
@@ -28,7 +24,6 @@ function App(props) {
                 sortVal={props.sortVal}
                 sortDirection={props.sortDirection}
                 deleteAllTasks = {props.deleteAllTasks}
-                sharedWith = {<p></p>}
                 initial = {initial}/>
             <Bottom
                 showCompletedTask = {props.showCompletedTask}
@@ -97,7 +92,7 @@ function App(props) {
             />
             <p>Number of tasks: {taskCount + (taskCount===10 && " (max)") }</p>
             <TaskList handleTaskFieldChanged={props.handleTaskFieldChanged}
-                      tasks={props.tasks} /*showCompletedTask={props.showCompletedTask}*/
+                      tasks={props.tasks}
                       setSort={props.setSort}
                       sortPriority={props.sortPriority}
                       sortDirection={props.sortDirection}

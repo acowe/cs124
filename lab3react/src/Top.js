@@ -1,4 +1,3 @@
-import App from "./App";
 import {useState} from "react";
 import './Top.css';
 
@@ -7,7 +6,7 @@ function Top(props) {
     const[taskListInput, setTaskListInput] = useState(props.currentList);
     const showSort = !(props.initial);
 
-    console.log("showSort" + showSort.toString());
+
 
     const selectList = props.taskLists.map((l) => {
         return <option value={l.list_id}> {l.list_name}</option>
