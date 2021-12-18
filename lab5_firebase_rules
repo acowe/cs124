@@ -1,0 +1,67 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth.uid != null && request.auth.uid != null;
+    }
+    
+    function isDocOwner() {
+      return request.auth.uid == resource.data.owner;
+    }
+    
+    function updatedDocHasCorrectOwner() {
+      return request.auth.uid == request.resource.data.owner;
+    }
+    
+    function updatedDocHasSameOwner() {
+      return resource.data.owner == request.resource.data.owner;
+    }
+
+		function updateDocHasSameSharing() {
+			return resource.data.sharedWith == request.resource.data.sharedWith;
+    }
+    
+    function isSharedWithMe() {
+      return request.auth.token.email in resource.data.sharedWith;
+    }
+
+    match /People-NoAuthenticationNeeded/{person} {
+        allow read, write: if request.time < timestamp.date(2021, 12, 10);
+    }
+
+    match /TaskList-AuthenticationRequired/{tasklist} {
+      allow read: if signedIn() && isDocOwner();
+      allow create: if signedIn() && updatedDocHasCorrectOwner();
+      allow update: if signedIn() && isDocOwner() &&
+        updatedDocHasCorrectOwner();
+      allow delete: if signedIn() && isDocOwner();
+      
+      match /Tasks/{task} {
+      	allow read;
+      	allow create: if signedIn() && updatedDocHasCorrectOwner();
+      	allow update: if signedIn() && isDocOwner() &&
+        	updatedDocHasCorrectOwner();
+      	allow delete: if signedIn() && isDocOwner();
+    	}
+    
+    }
+    
+    	
+    match /TaskList-SharingAllowed/{tasklist} {
+      allow read: if signedIn() && isSharedWithMe();
+      allow create: if signedIn() && updatedDocHasCorrectOwner();
+      allow update: if signedIn() && isSharedWithMe() &&
+        updatedDocHasSameOwner() && updateDocHasSameSharing();
+      allow delete: if signedIn() && isDocOwner();
+      
+      match /Tasks/{task} {
+      	allow read;
+      	allow create: if signedIn() && updatedDocHasCorrectOwner();
+      	allow update: if signedIn() && isSharedWithMe();
+      	allow delete: if signedIn() && isSharedWithMe();
+    	}
+    }
+    
+    
+  }
+}
