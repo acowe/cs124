@@ -1,4 +1,3 @@
-import App from "./App";
 import './Task.css';
 import {useState} from "react";
 
@@ -9,10 +8,6 @@ function Task(props){
     const show = props.show;
     const toDelete = props.toDelete;
     const[editInput, setEditInput] = useState(props.task_name);
-    const[editPriority, setEditPriority] = useState(props.priority);
-
-    console.log(props.task_id)
-
 
     if(edit === 0){
         return <div id={"task"+props.task_id} className={"comp"+props.completed.toString()+"show"+show.toString()}>

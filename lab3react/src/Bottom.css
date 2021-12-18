@@ -2,13 +2,21 @@
     display: none;
 }
 
-.taskStuff_row1{
-    padding: 5px 5px;
+.showTasktrue{
+    padding: 15px 15px;
 }
 
-.listStuff_row1{
-    padding: 5px 5px;
+
+.showTaskfalseisOwnedfalse{
+    display: none;
 }
+.showTaskfalseisOwnedtrue{
+    display: none;
+}
+.showTasktrueisOwnedfalse{
+    display: none;
+}
+
 
 #clear {
     background-color: #FEC6BA;
@@ -34,6 +42,3 @@
     background-color: #FB9984;
 }
 
-.listAddDelete{
-    padding:15px 15px;
-}

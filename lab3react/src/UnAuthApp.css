@@ -1,0 +1,68 @@
+@media screen and (max-width: 766px) and  (max-height: 1023px){
+    .AppInUseButton {
+        display: revert;
+    }
+
+    .signIn {
+        display: revert;
+    }
+
+    .signUp {
+        display: revert;
+    }
+}
+
+@media screen and (max-width: 766px) and  (min-height: 1024px){
+    .AppInUseButton {
+        display: revert;
+    }
+
+    .signIn {
+        display: revert;
+    }
+
+    .signUp {
+        display: revert;
+    }
+}
+
+@media screen and (min-width: 767px) and (max-height: 1023px){
+    .AppInUseButton {
+        display: revert;
+        transform: scale(1.5) translateY(20%) translateX(17.25%);
+        text-align: left;
+    }
+
+    .signIn {
+        display: revert;
+        transform: scale(1.5) translateY(20%) translateX(17.25%);
+        text-align: left;
+    }
+
+    .signUp {
+        display: revert;
+        transform: scale(1.5) translateY(20%) translateX(17.25%);
+        text-align: left;
+    }
+}
+
+@media screen and (min-width: 767px) and (min-height: 1024px) {
+    .AppInUseButton {
+        display: revert;
+        transform: scale(6) translateY(50%) translateX(42.5%);
+        text-align: left;
+    }
+
+    .signIn {
+        display: revert;
+        transform: scale(2) translateY(50%) translateX(25%);
+        text-align: left;
+    }
+
+    .signUp {
+        display: revert;
+        transform: scale(2) translateY(50%) translateX(25%);
+        text-align: left;
+    }
+}
+

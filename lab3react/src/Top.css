@@ -3,6 +3,17 @@
     text-align: center;
 }
 
-.showSortfalse{
+.sharedWithText{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    font-size: 0.25em;
+    font-weight: bold;
+    padding: 5px 5px 5px 0px;
+}
+
+
+.showSortfalse {
     display: none;
 }

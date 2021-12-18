@@ -4,30 +4,54 @@ import {generateUniqueID} from "web-vitals/dist/modules/lib/generateUniqueID";
 import firebase from "firebase/compat";
 import {useCollection} from "react-firebase-hooks/firestore";
 
+
+
 const firebaseConfig = {
-    apiKey: "AIzaSyCd9qqxvMpEKpBzwfWcc2tlRFa6ICaLH_s",
-    authDomain: "hmc-cs124-fa21-labs.firebaseapp.com",
-    projectId: "hmc-cs124-fa21-labs",
-    storageBucket: "hmc-cs124-fa21-labs.appspot.com",
-    messagingSenderId: "949410042946",
-    appId: "1:949410042946:web:0113b139a7e3cd1cc709db"
+    apiKey: "AIzaSyCcjiZC0kvbIDUuYKiskjJDrvurCA-F2g8",
+    authDomain: "acowe-fbdb1.firebaseapp.com",
+    projectId: "acowe-fbdb1",
+    storageBucket: "acowe-fbdb1.appspot.com",
+    messagingSenderId: "258279491687",
+    appId: "1:258279491687:web:b339460be12ffae3222cc2",
+    measurementId: "G-DQR3SH9VE5"
 };
+
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-const collectionName = "acowe-tasks-2"
-
 
 function InCloudApp(props) {
-    const query = db.collection(collectionName);
+
+    const collectionName = props.collectionName;
+    console.log(collectionName);
+
+    const query = db.collection(collectionName).where("sharedWith", "array-contains", props.user.email);
     const [value, loading, error] = useCollection(query);
     const [currentList, setCurrentList] = useState("wow");
+    const [currentListSharedWith, setCurrentListSharedWith] = useState([]);
+    const [isOwner, setIsOwner] = useState(false);
 
     const [sortVal, setSortVal] = useState("default");
     const [sortPriority, setSortPriority] = useState("place_order");
-    const [sortDirection, setSortDirection] = useState('asc');
+    const [sortDirection, setSortDirection] = useState("asc");
 
-    const query_2 = db.collection(collectionName).doc(currentList)
-        .collection(currentList + "_tasks").orderBy(sortPriority,sortDirection);
+
+
+    let query_2a;
+
+    if (sortDirection === "desc"){
+        query_2a = db.collection(collectionName).doc(currentList)
+            .collection("Tasks")
+            .orderBy(sortPriority,"desc");
+    }
+    else{
+        query_2a = db.collection(collectionName).doc(currentList)
+            .collection("Tasks")
+            .orderBy(sortPriority,"asc");
+    }
+
+    const query_2 = query_2a;
+
+
     const [task_value, task_loading, t_error] = useCollection(query_2);
 
 
@@ -35,6 +59,8 @@ function InCloudApp(props) {
     const [toDelete, setToDelete]=useState(false);
     const [maxMessage, setMaxMessage] = useState("");
     const [orderNum, setOrderNum] = useState(0);
+
+
 
     /*database.collection(collectionName).doc(tasks.).collection('movies').get()*/
 
@@ -45,18 +71,28 @@ function InCloudApp(props) {
             return {...doc.data()}});
     }
 
-    console.log(taskLists)
     if(currentList !== "wow" && task_value){
         tasks = task_value.docs.map((doc)=>{
             return {...doc.data()}});
     }
 
-    if(tasks.length !== 0){
-        console.log(tasks[0].task_id);
+
+    function sharedListSelect(list){
+        const user_email = props.user.email;
+        if(list !== "wow"){
+            db.collection(collectionName).where("sharedWith", "array-contains", props.user.email)
+                .get()
+                .then(querySnapshot => {
+                    querySnapshot.forEach(doc =>
+                    {if(doc.id === list){
+                        setCurrentListSharedWith(doc.data().sharedWith);
+                        setIsOwner(doc.data().sharedWith[0] === user_email);
+                    }
+                    });
+                });
+        }
+
     }
-
-
-
 
     function setSort(sortPref) {
         setSortVal(sortPref);
@@ -79,50 +115,57 @@ function InCloudApp(props) {
         const newListId = generateUniqueID();
         db.collection(collectionName).doc(newListId).set({
             list_id: newListId,
-            list_name: listNameText
-        })
+            list_name: listNameText,
+            sharedWith: [props.user.email],
+            owner: props.user.uid
+        }).catch((error) => {
+            console.error("Error writing document: ", error);
+        });
+
         setCurrentList(newListId);
+        sharedListSelect(newListId);
     }
 
     function handleTaskListSelect(listId){
         console.log("input list id: " + listId);
         setCurrentList(listId);
+        sharedListSelect(listId);
     }
+
+
 
 
 
     function handleTaskAdded(text, priorityNum){
-        if(tasks.length < 10){
-            setMaxMessage("");
-            const newTaskId = generateUniqueID();
-            setOrderNum(orderNum + 1);
-            db.collection(collectionName).doc(currentList)
-                .collection(currentList + "_tasks")
-                .doc(newTaskId).set({
-                task_id: newTaskId,
-                task_name: text,
-                completed: false,
-                priority: priorityNum,
-                place_order: orderNum,
-            })
+        setMaxMessage("");
+        const newTaskId = generateUniqueID();
+        setOrderNum(orderNum + 1);
+        db.collection(collectionName).doc(currentList)
+            .collection("Tasks")
+            .doc(newTaskId).set({
+            task_id: newTaskId,
+            task_name: text,
+            completed: false,
+            priority: priorityNum,
+            place_order: orderNum,
+            sharedWith: currentListSharedWith,
+            owner: props.user.uid
+        }).catch((error) => {
+            console.error("Error writing document: ", error);
+        })
 
-        }
-        else if (tasks.length = 10){
-            setMaxMessage("Max number of tasks reached! (You should" +
-                " take care of some of the stuff on the list first! :) )");
-        }
     }
 
     function deleteAllTasks(listID){
         db.collection(collectionName).doc(listID)
-            .collection("" + listID + "_tasks")
+            .collection("Tasks")
             .get()
             .then(querySnapshot => {
                 querySnapshot.forEach(doc => {
                     db.collection(collectionName)
                         .doc(listID)
-                        .collection("" + listID + "_tasks").
-                    doc(doc.id).delete();
+                        .collection("Tasks").
+                    doc(doc.id).delete()
                 });
             });
     }
@@ -146,15 +189,37 @@ function InCloudApp(props) {
                 setCurrentList(taskLists[0].list_id);
             }
             deleteAllTasks(listToBeDeleted);
-            db.collection(collectionName).doc(listToBeDeleted).delete();
+            db.collection(collectionName).doc(listToBeDeleted).delete().catch((error) => {
+                console.error("Error deleting document: ", error);
+            });
         }
+    }
+
+    function handleTaskListShared(newOwner) {
+        db.collection(collectionName).doc(currentList).update(
+            {sharedWith: currentListSharedWith.concat([newOwner])}
+        ).catch((error) => {
+            console.error("Error writing document: ", error);
+        });
+        sharedListSelect(currentList);
+    }
+
+    function handleTaskListUnShared(removedOwner) {
+        db.collection(collectionName).doc(currentList).update(
+            {sharedWith: currentListSharedWith.filter(owner => owner !== removedOwner)}
+        ).catch((error) => {
+            console.error("Error writing document: ", error);
+        });
+        sharedListSelect(currentList);
     }
 
     function handleTaskFieldChanged(taskId, field, value) {
         db.collection(collectionName).doc(currentList)
-            .collection(currentList + "_tasks").doc(taskId).update(
+            .collection("Tasks").doc(taskId).update(
             {[field]:value}
-        );
+        ).catch((error) => {
+            console.error("Error writing document: ", error);
+        });
     }
 
 
@@ -176,8 +241,10 @@ function InCloudApp(props) {
         for(let i=0; i< completedIDs.length;i++){
             db.collection(collectionName)
                 .doc(currentList)
-                .collection(currentList + "_tasks")
-                .doc(completedIDs[i]).delete();
+                .collection("Tasks")
+                .doc(completedIDs[i]).delete().catch((error) => {
+                console.error("Error writing document: ", error);
+            });
         }
         setToDelete(false);
     }
@@ -204,6 +271,8 @@ function InCloudApp(props) {
              handleHideCompleted={()=>setShowCompletedTask(!showCompletedTask)}
              handleTaskListAdded ={handleTaskListAdded}
              handleTaskListSelect = {handleTaskListSelect}
+             handleTaskListShared = {handleTaskListShared}
+             handleTaskListUnShared = {handleTaskListUnShared}
              handleTaskAdded ={handleTaskAdded}
              handleTaskFieldChanged = {handleTaskFieldChanged}
              handleTaskListDeleted={handleTaskListDeleted}
@@ -212,26 +281,10 @@ function InCloudApp(props) {
              setSort={setSort}
              sortVal={sortVal}
              toDelete={toDelete}
-             maxMessage={maxMessage}/>
+             maxMessage={maxMessage}
+             isOwner = {isOwner}
+             currentListSharedWith = {currentListSharedWith}
+        />
     </div>
 }
-
-
-/*setData(setDataHelper(id,check))*/
 export default InCloudApp;
-
-
-
-/*onItemDeleted={handleItemsDeleted} onItemAdded={(text)=>handleItemAdded(text)}
-
-            else return task;}))} data={data}
-        handleConfEdit={(id,editText)=>setData([...data].map(task =>{
-            if(id.includes(task.id)) {
-                return {
-                    ...task,
-                    name: editText
-                }
-            }
-            else return task;}))}
-             showCompletedTask={showCompletedTask}
-             handleHideCompleted={()=>setShowCompletedTask(!showCompletedTask)}*/

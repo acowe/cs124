@@ -1,4 +1,3 @@
-import App from "./App";
 import {useState} from "react";
 import './Top.css';
 
@@ -7,7 +6,7 @@ function Top(props) {
     const[taskListInput, setTaskListInput] = useState(props.currentList);
     const showSort = !(props.initial);
 
-    console.log("showSort" + showSort.toString());
+
 
     const selectList = props.taskLists.map((l) => {
         return <option value={l.list_id}> {l.list_name}</option>
@@ -32,6 +31,7 @@ function Top(props) {
         </select>
         </span>
         <br/>
+        <span className="sharedWithText">{props.sharedWith}</span><br/>
         <div className={"showSort" + showSort.toString()}>
             <label htmlFor="sortWithSelect" aria-label = "Sort by Menu">Sort by:</label>
             <select name="sortWithSelect" aria-label = "Sort by Menu" id="sortWithSelect" value={props.sortVal}

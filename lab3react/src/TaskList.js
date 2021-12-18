@@ -1,5 +1,4 @@
 import Task from './Task.js'
-import App from "./App";
 import {useState} from "react";
 import './TaskList.css';
 

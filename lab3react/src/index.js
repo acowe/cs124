@@ -1,15 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
-import InCloudApp from "./inCloudApp";
-const initialData = [{id: 52, name:"call mom", completed:false},{id: 53, name:"eat Book", completed:false},
-                     {id: 54, name:"order lunch", completed:false}];
+import UnAuthApp from "./UnAuthApp";
 
 ReactDOM.render(
   <React.StrictMode>
-    <InCloudApp initialData={initialData}/>
+    <UnAuthApp/>
   </React.StrictMode>,
   document.getElementById('root')
 );

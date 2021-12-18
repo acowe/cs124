@@ -17,7 +17,7 @@
 @media screen and (min-width: 767px) and (max-height: 1023px){
   .App {
     display: revert;
-    transform: scale(1.5) translateY(20%);
+    transform: scale(1.5) translateY(25%);
     text-align: center;
   }
 }
@@ -25,7 +25,7 @@
 @media screen and (min-width: 767px) and (min-height: 1024px) {
   .App {
     display: revert;
-    transform: scale(6) translateY(50%) translateX(22.5%);
+    transform: scale(6) translateY(50%) translateX(25%);
     text-align: center;
   }
 }
